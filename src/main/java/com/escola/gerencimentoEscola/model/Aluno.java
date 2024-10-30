@@ -7,14 +7,6 @@ import jakarta.persistence.Id;
 import org.springframework.data.repository.Repository;
 
 @Entity
-public class ClasseDisciplina() {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private String nome;
-    private double nota;
-}
-
-@Entity
 public class Aluno {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,7 +52,7 @@ public class Aluno {
     }
 
     public double calcularMedia() {
-
+        return 0.0;
     }
 
     @Override
@@ -74,6 +66,6 @@ public class Aluno {
     }
 }
 
-interface AlunoReposotory extends Repository<Aluno, Long> {
+interface AlunoRepository extends Repository<Aluno, Long> {
 
 }
