@@ -1,26 +1,33 @@
 package com.escola.gerencimentoEscola.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import org.hibernate.sql.results.graph.entity.internal.DiscriminatedEntityInitializer;
 import org.springframework.data.repository.Repository;
 
-@Entity
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+@Entity(name="alunos")
 public class Aluno {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String matricula;
+    private String nome;
     private int idade;
-    private String turma;
+    private String nomeTurma;
+
+    @ManyToOne
+    private Turma turma;
 
     public Aluno(){}
 
-    public Aluno(String matricula, int idade, String turma) {
+    public Aluno(String matricula, String nome, int idade, String turma) {
+        this.nome = nome;
         this.matricula = matricula;
         this.idade = idade;
-        this.turma = turma;
+        this.nomeTurma = turma;
     }
 
     public Long getId() {
@@ -36,7 +43,7 @@ public class Aluno {
     }
 
     public String getTurma() {
-        return turma;
+        return nomeTurma;
     }
 
     public void setMatricula(String matricula) {
@@ -48,11 +55,31 @@ public class Aluno {
     }
 
     public void setTurma(String turma) {
-        this.turma = turma;
+        this.nomeTurma = turma;
     }
 
-    public double calcularMedia() {
-        return 0.0;
+    public double calcularMedia(DisciplinaRepository repository) {
+        var disciplinas = repository.findByAlunoId(this.id);
+        double media = 0.0;
+        int cnt = 0;
+        for (Disciplina d: disciplinas) {
+            media += d.getNota();
+            cnt++;
+        }
+        return media / cnt;
+    }
+
+    public void adicionaDisciplina(DisciplinaRepository repository, Disciplina d) {
+        d.setAluno(this);
+        repository.save(d);
+    }
+
+    public void deleteDisciplina(DisciplinaRepository repository, Disciplina d) {
+        repository.deleteById(d.getId());
+    }
+
+    public void exibirInformacoes() {
+        System.out.println(this.toString());
     }
 
     @Override
@@ -60,12 +87,17 @@ public class Aluno {
         return "Aluno{" +
                 "id=" + id +
                 ", matricula='" + matricula + '\'' +
+                ", nome='" + nome + '\'' +
                 ", idade=" + idade +
-                ", turma='" + turma + '\'' +
+                ", turma='" + nomeTurma + '\'' +
                 '}';
     }
-}
 
-interface AlunoRepository extends Repository<Aluno, Long> {
+    public String getNome() {
+        return nome;
+    }
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 }
