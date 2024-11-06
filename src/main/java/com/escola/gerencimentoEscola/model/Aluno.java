@@ -43,20 +43,44 @@ public class Aluno {
             .orElse(0);
     }
 
-    public void adicionarDisciplina(Disciplina disciplina) {
-        this.disciplinas.add(disciplina);
-    }
-
-    public void removeDisciplina(Disciplina disciplina) {
-        this.disciplinas.remove(disciplina);
-    }
-
     public void exibirInformacoes() {
         System.out.println(this.toString());
     }
 
-    public String getIdentificadorTurma() {
-        return this.turma.getIdentificador();
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public int getIdade() {
+        return idade;
+    }
+
+    public void setIdade(int idade) {
+        this.idade = idade;
+    }
+
+    public List<Disciplina> getDisciplinas() {
+        return disciplinas;
+    }
+
+    public void setDisciplinas(List<Disciplina> disciplinas) {
+        this.disciplinas = disciplinas;
+    }
+
+    public Turma getTurma() {
+        return turma;
     }
 
     public void setTurma(Turma turma) {
