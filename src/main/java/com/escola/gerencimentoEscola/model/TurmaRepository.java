@@ -1,5 +1,6 @@
 package com.escola.gerencimentoEscola.model;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TurmaRepository extends CrudRepository<Turma, Long> {}
+public interface TurmaRepository extends JpaRepository<Turma, Long> {
+}

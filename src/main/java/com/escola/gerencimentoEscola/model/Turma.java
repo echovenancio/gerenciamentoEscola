@@ -21,10 +21,9 @@ public class Turma {
     private String identificador;
 
     @OneToMany(
-        mappedBy = "turma",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.EAGER
+        cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
+        fetch = FetchType.LAZY,
+        mappedBy = "turma"
     )
     private List<Aluno> alunos = new ArrayList<Aluno>();
 
@@ -34,8 +33,26 @@ public class Turma {
         this.identificador = identificador;
     }
 
+    public void setIdentificador(String identificador) {
+        this.identificador = identificador;
+    }
+
     public String getIdentificador() {
         return identificador;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public List<Aluno> getAlunos() {
+        return alunos;
+    }
+
+    public void adicionarAlunos(List<Aluno> alunos) {
+        for (Aluno aluno : alunos) {
+            this.alunos.add(aluno);
+        }
     }
 
     public void adicionarAluno(Aluno aluno) {
@@ -55,13 +72,6 @@ public class Turma {
         } else {
             return Optional.of(this.alunos.get(index));
         }
-    }
-
-    public double calcularMedia() {
-        return this.alunos.stream()
-            .mapToDouble(Aluno::calcularMedia)
-            .average()
-            .orElse(0);
     }
 
     public int quantidadeDeAlunos() {
