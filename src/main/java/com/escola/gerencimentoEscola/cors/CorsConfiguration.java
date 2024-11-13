@@ -14,4 +14,3 @@ public class CorsConfiguration implements WebMvcConfigurer {
                         "HEAD", "TRACE", "CONNECT");
     }
 }
-

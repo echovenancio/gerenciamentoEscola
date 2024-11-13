@@ -1,6 +1,7 @@
 package com.escola.gerencimentoEscola.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,8 +62,13 @@ class TurmaController {
 
     @PostMapping("/turmas")
     @Transactional
-    public TurmaDTO postTurma(@RequestBody Turma turma) {
-        return new TurmaDTO(turmaRepository.save(turma));
+    public TurmaDTO postTurma(@RequestBody Map<String, String> post) {
+        var identificador = post.getOrDefault("identificador", null);
+        if (identificador != null) {
+            return new TurmaDTO(turmaRepository.save(new Turma(identificador)));
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/turmas/{id}")

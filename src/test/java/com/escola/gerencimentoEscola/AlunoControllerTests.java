@@ -13,12 +13,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 
 import com.escola.gerencimentoEscola.model.Aluno;
 import com.escola.gerencimentoEscola.model.AlunoDTO;
-import com.fasterxml.jackson.core.type.TypeReference;
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AlunoControllerTests {

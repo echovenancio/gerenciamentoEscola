@@ -44,8 +44,14 @@ public class DisciplinaController {
 
     @PostMapping("/disciplinas")
     @Transactional
-    public DisciplinaDTO postDisciplina(@RequestBody Disciplina disciplina) {
-        return new DisciplinaDTO(disciplinaRepository.save(disciplina));
+    public DisciplinaDTO postDisciplina(@RequestBody Map<String, String> post) {
+        var nome = post.getOrDefault("nome", null);
+        if (nome != null) {
+            var disciplina = new Disciplina(nome);
+            return new DisciplinaDTO(disciplinaRepository.save(disciplina));
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/disciplinas/{id}")

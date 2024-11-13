@@ -7,7 +7,9 @@ import com.escola.gerencimentoEscola.model.AlunoDisciplinaDTO;
 import com.escola.gerencimentoEscola.model.AlunoDisciplinaRepository;
 import com.escola.gerencimentoEscola.model.AlunoRepository;
 import com.escola.gerencimentoEscola.model.DisciplinaRepository;
+import com.escola.gerencimentoEscola.service.EmailService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -37,9 +40,25 @@ class PutAluno {
     }
 }
 
+class NovoAluno {
+    public String matricula;
+    public String nome;
+    public int idade;
+
+    public NovoAluno(String matricula, String nome, int idade) {
+        this.matricula = matricula;
+        this.nome = nome;
+        this.idade = idade;
+    }
+}
+
 
 @RestController
+@RequestMapping("/api/alunos")
 public class AlunoController {
+
+    @Autowired
+    EmailService emailService;
 
     @Autowired
     AlunoRepository alunoRepository;
@@ -50,12 +69,13 @@ public class AlunoController {
     @Autowired
     DisciplinaRepository disciplinaRepository;
 
-    @GetMapping("/alunos")
+    @GetMapping()
     public List<AlunoDTO> getAlunos() {
         return alunoRepository.findAll().stream().map(a -> new AlunoDTO(a)).toList();
     }
 
-    @GetMapping("/alunos/{id}")
+    @Operation(summary = "Buscar um aluno com base no id")
+    @GetMapping("/{id}")
     public AlunoDTO getAluno(@PathVariable Long id) {
         var maybe_aluno = alunoRepository.findById(id);
         if (maybe_aluno.isPresent()) {
@@ -67,13 +87,13 @@ public class AlunoController {
         }
     }
 
-    @PostMapping("/alunos")
+    @PostMapping("/")
     @Transactional
-    public Aluno postAluno(@RequestBody Aluno aluno) {
-        return alunoRepository.save(aluno);
+    public Aluno postAluno(@RequestBody NovoAluno aluno) {
+        return alunoRepository.save(new Aluno(aluno.matricula, aluno.nome, aluno.idade));
     }
 
-    @PutMapping("/alunos/{id}")
+    @PutMapping("/{id}")
     @Transactional
     public Aluno putAluno(@PathVariable Long id, @RequestBody PutAluno newAluno) {
         assert(id != null);
@@ -89,7 +109,7 @@ public class AlunoController {
         return aluno;
     }
 
-    @DeleteMapping("/alunos/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
     public Long deleteAluno(@PathVariable Long id) {
         var aluno = alunoRepository.findById(id);
@@ -100,7 +120,7 @@ public class AlunoController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/alunos/{id}/disciplinas")
+    @GetMapping("/{id}/disciplinas")
     public List<AlunoDisciplinaDTO> getDisciplinas(@PathVariable Long id) {
         return alunoDisciplinaRepository.findAllByAlunoId(id)
             .stream()
@@ -108,7 +128,7 @@ public class AlunoController {
             .toList();
     }
 
-    @GetMapping("/alunos/{}/disciplinas/{id}")
+    @GetMapping("/{alunoId}/disciplinas/{id}")
     public AlunoDisciplinaDTO getDisciplina(@PathVariable Long id) {
         var maybe_disciplina = alunoDisciplinaRepository.findById(id);
         if (maybe_disciplina.isPresent()) {
@@ -117,7 +137,7 @@ public class AlunoController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/alunos/{alunoId}/disciplinas")
+    @PostMapping("/{alunoId}/disciplinas")
     @Transactional
     public AlunoDisciplinaDTO postDisciplina(
         @PathVariable Long alunoId, 
@@ -136,7 +156,7 @@ public class AlunoController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping("/alunos/{alunoId}/disciplinas/{disciplinaId}")
+    @PutMapping("/{alunoId}/disciplinas/{disciplinaId}")
     @Transactional
     public AlunoDisciplinaDTO putDisciplina(
         @PathVariable Long disciplinaId, 
@@ -157,7 +177,7 @@ public class AlunoController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping("/alunos/{alunoId}/disciplinas/{disciplinaId}")
+    @DeleteMapping("/{alunoId}/disciplinas/{disciplinaId}")
     @Transactional
     public Long deleteDisciplina(@PathVariable Long alunoId, @PathVariable Long disciplinaId) {
         var maybe_alunoDisciplina = alunoDisciplinaRepository.findById(disciplinaId);
@@ -169,5 +189,20 @@ public class AlunoController {
             return disciplinaId;
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+
+
+    @PostMapping("/sendmail")
+    public String sendMail(@RequestBody Map<String, String> post) {
+        var subject = post.getOrDefault("subject", null); 
+        var text = post.getOrDefault("text", null);
+        var sendTo = post.getOrDefault("sendTo", null);
+
+        if (subject != null && text != null && sendTo != null) {
+            emailService.enviarEmail(subject, text, sendTo);
+            return "email enviado";
+        } else {
+            return "email não foi enviado";
+        }
     }
 }

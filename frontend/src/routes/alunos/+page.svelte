@@ -3,22 +3,23 @@
 
     import { Button } from "$lib/components/ui/button";
     import { Checkbox } from "$lib/components/ui/checkbox";
-    import { CirclePlus, SquareArrowOutUpRight } from "lucide-svelte";
+    import { CirclePlus, SquareArrowOutUpRight, ChevronDown } from "lucide-svelte";
     import { Separator } from "$lib/components/ui/separator/index.js";
     import * as Table from "$lib/components/ui/table";
-    import { readable } from "svelte/store";
+    import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 
     type AlunoDL = {
         id: number,
         nome: string,
         matricula: string,
-        media: number
+        media: number,
+        idade: number
     }
 
     let data: AlunoDL[] = []
     onMount(async () => {
         try {
-            const response = await fetch("http://localhost:8080/alunos");
+            const response = await fetch("http://localhost:8080/api/alunos");
             if (!response.ok) throw new Error("Errro buscando alunos");
             data = await response.json();
             console.log(data);
@@ -28,7 +29,7 @@
     })
 </script>
 
-<main class="py-4 px-4 flex flex-col gap-4">
+<div class="py-4 flex flex-col gap-4">
     <h1 class="text-2xl">Gerenciamento de Alunos</h1>
     <Button class="max-w-fit">
         <CirclePlus class="mr-2" />
@@ -56,14 +57,23 @@
                     <Table.Cell>{aluno.matricula}</Table.Cell>
                     <Table.Cell>{aluno.nome}</Table.Cell>
                     <Table.Cell>{aluno.idade}</Table.Cell>
-                    <Table.Cell class="text-right">{aluno.media}</Table.Cell>
+                    <Table.Cell>{aluno.media}</Table.Cell>
                     <Table.Cell class="text-right">
-                        <Button href="alunos/{aluno.id}" variant="outline">
-                            <SquareArrowOutUpRight/>
-                        </Button>
+                        <DropdownMenu.Root>
+                            <DropdownMenu.Trigger asChild let:builder>
+                                <Button builders={[builder]} variant="outline">
+                                    <ChevronDown/>
+                                </Button>
+                            </DropdownMenu.Trigger>
+                            <DropdownMenu.Content class="w-56">
+                                <DropdownMenu.Item>
+                                    <a href="/alunos/{aluno.id}">Ver detalhes do aluno</a>
+                                </DropdownMenu.Item>
+                            </DropdownMenu.Content>
+                        </DropdownMenu.Root>
                     </Table.Cell>
                 </Table.Row>
             {/each}
         </Table.Body>
     </Table.Root>
-</main>
+</div>

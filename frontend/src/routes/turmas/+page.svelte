@@ -19,7 +19,7 @@
     })
 </script>
 
-<main class="py-4 px-4 flex flex-col gap-4">
+<div class="py-4 flex flex-col gap-4">
     <h1 class="text-2xl">Gerenciamento de Turmas</h1>
     <Button class="max-w-fit">
         <CirclePlus class="mr-2" />
@@ -43,4 +43,4 @@
             {/each}
         </Table.Body>
     </Table.Root>
-</main>
+</div>

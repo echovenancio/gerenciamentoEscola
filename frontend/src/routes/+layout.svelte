@@ -15,8 +15,8 @@
 </script>
 
 <ModeWatcher/>
-<header class="">
-    <div class="flex items-center justify-between py-4 px-4 border-b-2">
+<header class="container sticky">
+    <div class="flex items-center justify-between py-4 border-b-2">
     <span>
             <Button variant="outline" href="/">
                 <School/>
@@ -46,9 +46,11 @@
     </div>
 </header>
 
-{@render children()}
+<main class="container">
+    {@render children()}
+</main>
 
-<footer class="px-4">
+<footer class="container">
     Todos os direitos reservados.
 </footer>
 
