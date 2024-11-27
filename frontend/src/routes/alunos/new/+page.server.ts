@@ -1,5 +1,5 @@
 import type { PageServerLoad, Actions } from "./$types.js";
-import { fail } from "@sveltejs/kit";
+import { fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { alunoSchema } from "./schema.js";
 import { zod } from "sveltekit-superforms/adapters";
@@ -25,8 +25,10 @@ export const actions: Actions = {
             },
             body: jsonData
         })
-            .then((res) => {
+            .then(async (res) => {
+                let resData = await res.json(); 
                 console.log(res); 
+                redirect(307, '/alunos/' + resData.id);
             })
             .catch((error) => {
                 console.log(error);

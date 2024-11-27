@@ -27,7 +27,7 @@ public class AlunoDisciplina {
     private Aluno aluno;
 
     @Enumerated(EnumType.STRING)
-    private AlunoDisciplinaStatus status;
+    private AlunoDisciplinaStatus status = AlunoDisciplinaStatus.EM_CURSO;
 
     public AlunoDisciplina() {}
 
