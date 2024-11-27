@@ -7,6 +7,7 @@
     import { Separator } from "$lib/components/ui/separator/index.js";
     import * as Table from "$lib/components/ui/table";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+    import { page } from "$app/stores"
 
     type AlunoDL = {
         id: number,
@@ -31,7 +32,7 @@
 
 <div class="py-4 flex flex-col gap-4">
     <h1 class="text-2xl">Gerenciamento de Alunos</h1>
-    <Button class="max-w-fit">
+    <Button class="max-w-fit" href={$page.url + "/new"}>
         <CirclePlus class="mr-2" />
         Adicione um novo aluno
     </Button>

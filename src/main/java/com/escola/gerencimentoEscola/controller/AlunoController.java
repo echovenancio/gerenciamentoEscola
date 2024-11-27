@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -70,8 +71,8 @@ public class AlunoController {
     DisciplinaRepository disciplinaRepository;
 
     @GetMapping()
-    public List<AlunoDTO> getAlunos() {
-        return alunoRepository.findAll().stream().map(a -> new AlunoDTO(a)).toList();
+    public List<AlunoDTO> getAlunos(@RequestParam(required = false) String nome, @RequestParam(required = false) String matricula, @RequestParam(required = false) Integer idade, @RequestParam(required = false) String orderBy) {
+        return alunoRepository.filterAlunos(nome, matricula, idade, orderBy).stream().map(a -> new AlunoDTO(a)).toList();
     }
 
     @Operation(summary = "Buscar um aluno com base no id")
@@ -87,7 +88,7 @@ public class AlunoController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping()
     @Transactional
     public Aluno postAluno(@RequestBody NovoAluno aluno) {
         return alunoRepository.save(new Aluno(aluno.matricula, aluno.nome, aluno.idade));

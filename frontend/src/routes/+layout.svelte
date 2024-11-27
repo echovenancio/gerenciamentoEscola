@@ -46,13 +46,9 @@
     </div>
 </header>
 
-<main class="container">
+<main class="container mx-auto lg:max-w-4xl">
     {@render children()}
 </main>
-
-<footer class="container">
-    Todos os direitos reservados.
-</footer>
 
 <style>
 </style>

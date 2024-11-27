@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -35,10 +37,8 @@ class PutTurma {
     }
 }
 
-
-
-
 @RestController
+@RequestMapping("/api/turmas")
 class TurmaController {
 
     @Autowired
@@ -46,12 +46,12 @@ class TurmaController {
     @Autowired
     AlunoRepository alunoRepository;
 
-    @GetMapping("/turmas")
-    public List<TurmaDTO> getTurmas() {
-        return turmaRepository.findAll().stream().map(t -> new TurmaDTO(t)).toList();
+    @GetMapping()
+    public List<TurmaDTO> getTurmas(@RequestParam(required = false) String identificador, @RequestParam(required = false) String orderBy) {
+        return turmaRepository.filterTurma(identificador, orderBy).stream().map(t -> new TurmaDTO(t)).toList();
     }
 
-    @GetMapping("/turmas/{id}")
+    @GetMapping("/{id}")
     public TurmaDTO getTurma(@PathVariable Long id) {
         var maybe_turma = turmaRepository.findById(id);
         if (maybe_turma.isPresent()) {
@@ -60,7 +60,7 @@ class TurmaController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/turmas")
+    @PostMapping()
     @Transactional
     public TurmaDTO postTurma(@RequestBody Map<String, String> post) {
         var identificador = post.getOrDefault("identificador", null);
@@ -71,7 +71,7 @@ class TurmaController {
         }
     }
 
-    @PutMapping("/turmas/{id}")
+    @PutMapping("/{id}")
     @Transactional
     public TurmaDTO putTurma(@PathVariable Long id, @RequestBody PutTurma pTurma) {
         Optional<Turma> maybe_turma = turmaRepository.findById(id);
@@ -92,7 +92,7 @@ class TurmaController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping("/turmas/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
     public Long deleteTurma(@PathVariable Long id) {
         Optional<Turma> maybe_turma = turmaRepository.findById(id);

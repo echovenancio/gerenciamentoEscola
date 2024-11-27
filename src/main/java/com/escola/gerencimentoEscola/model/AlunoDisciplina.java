@@ -1,11 +1,14 @@
 package com.escola.gerencimentoEscola.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 
 @Entity
 public class AlunoDisciplina {
@@ -22,6 +25,9 @@ public class AlunoDisciplina {
     @ManyToOne
     @JoinColumn(name = "aluno_id")
     private Aluno aluno;
+
+    @Enumerated(EnumType.STRING)
+    private AlunoDisciplinaStatus status;
 
     public AlunoDisciplina() {}
 
@@ -58,4 +64,13 @@ public class AlunoDisciplina {
     public Disciplina getDisciplina() {
         return disciplina;
     }
+
+    public AlunoDisciplinaStatus getStatus() {
+            return status;
+    }
+
+    public void setStatus(AlunoDisciplinaStatus status) {
+            this.status = status;
+    }
+
 }

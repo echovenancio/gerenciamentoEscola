@@ -5,11 +5,12 @@
     import { CirclePlus } from "lucide-svelte";
     import { Separator } from "$lib/components/ui/separator/index.js";
     import * as Table from "$lib/components/ui/table";
+    import { page } from "$app/stores";
 
     let data: any = []
     onMount(async () => {
         try {
-            const response = await fetch("http://localhost:8080/disciplinas");
+            const response = await fetch("http://localhost:8080/api/disciplinas");
             if (!response.ok) throw new Error("Errro buscando disciplinas");
             data = await response.json();
             console.log(data);
@@ -21,7 +22,7 @@
 
 <div class="py-4 flex flex-col gap-4">
     <h1 class="text-2xl">Gerenciamento de Disciplinas</h1>
-    <Button class="max-w-fit">
+    <Button class="max-w-fit" href={$page.url + "/new"}>
         <CirclePlus class="mr-2" />
         Adicione uma nova disciplina
     </Button>

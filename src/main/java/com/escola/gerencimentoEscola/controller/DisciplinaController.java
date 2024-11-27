@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,19 +23,20 @@ import com.escola.gerencimentoEscola.model.DisciplinaRepository;
 import jakarta.transaction.Transactional;
 
 @RestController
+@RequestMapping("/api/disciplinas")
 public class DisciplinaController {
 
     @Autowired 
     DisciplinaRepository disciplinaRepository; 
 
-    @GetMapping("/disciplinas")
-    public List<DisciplinaDTO> getDisciplinas() {
-        return disciplinaRepository.findAll().stream()
+    @GetMapping()
+    public List<DisciplinaDTO> getDisciplinas(@RequestParam(required = false) String nome, @RequestParam(required = false) String orderBy) {
+        return disciplinaRepository.filterDisciplina(nome, orderBy).stream()
             .map(d -> new DisciplinaDTO(d))
             .toList();
     }
 
-    @GetMapping("/disciplinas/{id}")
+    @GetMapping("/{id}")
     public DisciplinaDTO getDisciplina(@PathVariable Long id) {
         var maybe_disciplina = disciplinaRepository.findById(id);
         if (maybe_disciplina.isPresent()) {
@@ -42,7 +45,7 @@ public class DisciplinaController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/disciplinas")
+    @PostMapping()
     @Transactional
     public DisciplinaDTO postDisciplina(@RequestBody Map<String, String> post) {
         var nome = post.getOrDefault("nome", null);
@@ -54,7 +57,7 @@ public class DisciplinaController {
         }
     }
 
-    @PutMapping("/disciplinas/{id}")
+    @PutMapping("/{id}")
     @Transactional
     public DisciplinaDTO putDisciplina(@PathVariable Long id, @RequestBody Map<String, String> put) {
         var newNome = put.getOrDefault("nome", null);
@@ -67,7 +70,7 @@ public class DisciplinaController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping("/disciplinas/{id}")
+    @DeleteMapping("/{id}")
     @Transactional
     public Long deleteDisciplina(@PathVariable Long id) {
         var maybe_disciplina = disciplinaRepository.findById(id);
