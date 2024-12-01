@@ -5,12 +5,14 @@ public class AlunoDisciplinaDTO {
     String nome;
     double nota;
     AlunoDisciplinaStatus status;
+    String professor;
 
     public AlunoDisciplinaDTO(AlunoDisciplina alunoDisciplina) {
         this.id = alunoDisciplina.getId();
         this.nome = alunoDisciplina.getDisciplina().getNome();
         this.nota = alunoDisciplina.getNota();
         this.status = alunoDisciplina.getStatus();
+        this.professor = alunoDisciplina.getProfessor().getNome();
     }
 
     public Long getId() {
@@ -23,6 +25,10 @@ public class AlunoDisciplinaDTO {
 
     public double getNota() {
         return nota;
+    }
+
+    public String getProfessor() {
+        return this.professor;
     }
 
     public String getStatus() {

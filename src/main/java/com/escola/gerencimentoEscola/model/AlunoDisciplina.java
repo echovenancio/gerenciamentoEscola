@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 
 @Entity
@@ -29,11 +30,15 @@ public class AlunoDisciplina {
     @Enumerated(EnumType.STRING)
     private AlunoDisciplinaStatus status = AlunoDisciplinaStatus.EM_CURSO;
 
+    @ManyToOne
+    private Professor professor;
+
     public AlunoDisciplina() {}
 
-    public AlunoDisciplina(Disciplina disciplina, Aluno aluno, double nota) {
+    public AlunoDisciplina(Disciplina disciplina, Aluno aluno, Professor professor, double nota) {
         this.disciplina = disciplina;
         this.aluno = aluno;
+        this.professor = professor;
         this.nota = nota;
     }
 
@@ -71,6 +76,14 @@ public class AlunoDisciplina {
 
     public void setStatus(AlunoDisciplinaStatus status) {
             this.status = status;
+    }
+
+    public Professor getProfessor() {
+        return this.professor;
+    }
+
+    public void setProfessor(Professor professor) {
+        this.professor = professor;
     }
 
 }

@@ -7,6 +7,7 @@ import com.escola.gerencimentoEscola.model.AlunoDisciplinaDTO;
 import com.escola.gerencimentoEscola.model.AlunoDisciplinaRepository;
 import com.escola.gerencimentoEscola.model.AlunoRepository;
 import com.escola.gerencimentoEscola.model.DisciplinaRepository;
+import com.escola.gerencimentoEscola.model.ProfessorRepository;
 import com.escola.gerencimentoEscola.service.EmailService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,6 +64,9 @@ public class AlunoController {
 
     @Autowired
     AlunoRepository alunoRepository;
+
+    @Autowired
+    ProfessorRepository professorRepository;
 
     @Autowired
     AlunoDisciplinaRepository alunoDisciplinaRepository;
@@ -145,12 +149,17 @@ public class AlunoController {
         @RequestBody Map<String, Long> post) {
         System.out.println(post.values());
         Long disciplinaId = post.getOrDefault("disciplina_id", null);
+        Long professorId = post.getOrDefault(("professor_id"), null);
         System.out.println(disciplinaId);
         if (disciplinaId != null) {
             var maybe_disciplina = disciplinaRepository.findById(disciplinaId);
             var maybe_aluno = alunoRepository.findById(alunoId);
-            if (maybe_disciplina.isPresent() && maybe_aluno.isPresent()) {
-                var alunoDisciplina = new AlunoDisciplina(maybe_disciplina.get(), maybe_aluno.get(), 0.0);
+            var maybe_professor = professorRepository.findById(professorId);
+            if (maybe_disciplina.isPresent() && maybe_aluno.isPresent() && maybe_professor.isPresent()) {
+                var alunoDisciplina = new AlunoDisciplina(
+                    maybe_disciplina.get(), 
+                    maybe_aluno.get(),
+                    maybe_professor.get(), 0.0);
                 return new AlunoDisciplinaDTO(alunoDisciplinaRepository.save(alunoDisciplina));
             }
         }
@@ -186,6 +195,7 @@ public class AlunoController {
             var alunoDisciplina = maybe_alunoDisciplina.get();
             alunoDisciplina.setDisciplina(null);
             alunoDisciplina.setAluno(null);
+            alunoDisciplina.setProfessor(null);
             alunoDisciplinaRepository.delete(alunoDisciplina);
             return disciplinaId;
         }

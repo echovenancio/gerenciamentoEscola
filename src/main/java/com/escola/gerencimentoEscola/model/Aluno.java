@@ -22,6 +22,7 @@ public class Aluno {
 
     private String matricula;
     private String nome;
+    private String email;
     private int idade;
 
     @OneToMany(mappedBy = "aluno", fetch = FetchType.LAZY)
@@ -108,4 +109,13 @@ public class Aluno {
             this.media
         );
     }
+
+    public String getEmail() {
+            return email;
+    }
+
+    public void setEmail(String email) {
+            this.email = email;
+    }
+
 }
