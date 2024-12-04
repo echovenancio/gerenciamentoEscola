@@ -1,5 +1,14 @@
 package com.escola.gerencimentoEscola.model;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
 
-public interface TurmaRepository extends CrudRepository<Turma, Long> {}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface TurmaRepository extends JpaRepository<Turma, Long> {
+    @Query(
+        "select t from Turma t where identificador like concat('%', coalesce(:identificador, t.identificador) ,'%') order by coalesce(:order, id)"
+    )
+    List<Turma> filterTurma(@Param("identificador") String identificador, @Param("order") String order);
+}

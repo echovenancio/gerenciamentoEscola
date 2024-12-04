@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  svelte:
+    build:
+      context: ./frontend  # path to your svelte kit app
+    ports:
+      - "3000:3000"  # expose the correct port (4173) on host machine
+    depends_on:
+      - app
+
+  db:
+    image: docker.io/postgres:13
+    environment:
+      POSTGRES_DB: db_fatec_dsm
+      POSTGRES_USER: fatec
+      POSTGRES_PASSWORD: fatec777
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data: 

@@ -6,10 +6,13 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.Formula;
 
 @Entity
 public class Aluno {
@@ -20,43 +23,78 @@ public class Aluno {
 
     private String matricula;
     private String nome;
+    private String email;
     private int idade;
+
+    @OneToMany(mappedBy = "aluno", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AlunoDisciplina> disciplinas = new ArrayList<>();
+
+    @Formula("(select COALESCE(avg(d.nota), 0.0) from aluno_disciplina d where d.aluno_id = id and d.status = 0)")
+    private double media;
 
     public Aluno() {}
 
-    public Aluno(String matricula, String nome, int idade) {
+    public Aluno(String matricula, String nome, String email, int idade) {
         this.matricula = matricula;
         this.nome = nome;
         this.idade = idade;
+        this.email = email;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Disciplina> disciplinas = new ArrayList<Disciplina>();
-
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "turma_id", nullable = true)
     private Turma turma;
-
-    public double calcularMedia() {
-        return this.disciplinas.stream()
-            .mapToDouble(Disciplina::getNota)
-            .average()
-            .orElse(0);
-    }
-
-    public void adicionarDisciplina(Disciplina disciplina) {
-        this.disciplinas.add(disciplina);
-    }
-
-    public void removeDisciplina(Disciplina disciplina) {
-        this.disciplinas.remove(disciplina);
-    }
 
     public void exibirInformacoes() {
         System.out.println(this.toString());
     }
 
-    public String getIdentificadorTurma() {
-        return this.turma.getIdentificador();
+    public double getMedia() {
+        return media;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public int getIdade() {
+        return idade;
+    }
+
+    public void setIdade(int idade) {
+        this.idade = idade;
+    }
+
+    public List<AlunoDisciplina> getDisciplinas() {
+        return disciplinas;
+    }
+
+    public void setDisciplinas(List<AlunoDisciplina> disciplinas) {
+        this.disciplinas = disciplinas;
+    }
+
+    public void addDisciplina(AlunoDisciplina disciplina) {
+        this.disciplinas.add(disciplina);
+    }
+
+    public Turma getTurma() {
+        return turma;
     }
 
     public void setTurma(Turma turma) {
@@ -70,7 +108,16 @@ public class Aluno {
             this.matricula,
             this.nome,
             this.idade,
-            this.calcularMedia()
+            this.media
         );
     }
+
+    public String getEmail() {
+            return email;
+    }
+
+    public void setEmail(String email) {
+            this.email = email;
+    }
+
 }

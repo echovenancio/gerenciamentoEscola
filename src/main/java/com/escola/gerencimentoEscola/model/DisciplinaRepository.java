@@ -1,6 +1,14 @@
 package com.escola.gerencimentoEscola.model;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
 
-public interface DisciplinaRepository
-    extends CrudRepository<Disciplina, Long> {}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface DisciplinaRepository extends JpaRepository<Disciplina, Long> {
+    @Query(
+        "select d from Disciplina d where nome like concat('%', coalesce(:nome, d.nome) ,'%') order by coalesce(:order, id)"
+    )
+    List<Disciplina> filterDisciplina(@Param("nome") String nome, @Param("order") String order);
+}

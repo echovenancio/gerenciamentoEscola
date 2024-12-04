@@ -1,9 +1,15 @@
 package com.escola.gerencimentoEscola.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Disciplina {
@@ -13,21 +19,34 @@ public class Disciplina {
     private Long id;
 
     private String nome;
-    private double nota;
+
+    @OneToMany(mappedBy = "disciplina", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AlunoDisciplina> disciplinas = new ArrayList<>();
 
     public Disciplina() {}
 
-    public Disciplina(String nome, double nota) {
+    public Disciplina(String nome) {
         this.nome = nome;
-        this.nota = nota;
     }
 
-    public double getNota() {
-        return nota;
+    public Long getId() {
+        return id;
     }
 
-    public void atribuirNota(double nota) {
-        this.nota = nota;
+    public List<AlunoDisciplina> getDisciplinas() {
+        return disciplinas;
+    }
+
+    public void setDisciplinas(List<AlunoDisciplina> disciplinas) {
+        this.disciplinas = disciplinas;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public void exibirInformacoes() {
@@ -36,6 +55,6 @@ public class Disciplina {
 
     @Override
     public String toString() {
-        return String.format("+nome: %s\n|nota: %f\n", this.nome, this.nota);
+        return String.format("+nome: %s\n|nota: %f\n", this.nome);
     }
 }
