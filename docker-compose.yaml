@@ -12,7 +12,7 @@ services:
 
   svelte:
     build:
-      context: ./svelte-app  # path to your svelte kit app
+      context: ./frontend  # path to your svelte kit app
     ports:
       - "3000:3000"  # expose the correct port (4173) on host machine
     depends_on:
