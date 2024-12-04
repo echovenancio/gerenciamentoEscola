@@ -20,7 +20,16 @@ import com.escola.gerencimentoEscola.model.Disciplina;
 import com.escola.gerencimentoEscola.model.DisciplinaDTO;
 import com.escola.gerencimentoEscola.model.DisciplinaRepository;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
+
+class DisciplinaResource {
+    public String nome;
+    DisciplinaResource() {}
+    DisciplinaResource(String nome) {
+        this.nome = nome;
+    }
+}
 
 @RestController
 @RequestMapping("/api/disciplinas")
@@ -29,6 +38,7 @@ public class DisciplinaController {
     @Autowired 
     DisciplinaRepository disciplinaRepository; 
 
+    @Operation(summary = "Retorna todas as disciplinas de acordo com a especificação do filtro")
     @GetMapping()
     public List<DisciplinaDTO> getDisciplinas(@RequestParam(required = false) String nome, @RequestParam(required = false) String orderBy) {
         return disciplinaRepository.filterDisciplina(nome, orderBy).stream()
@@ -36,6 +46,7 @@ public class DisciplinaController {
             .toList();
     }
 
+    @Operation(summary = "Retorna uma disciplina com base no id")
     @GetMapping("/{id}")
     public DisciplinaDTO getDisciplina(@PathVariable Long id) {
         var maybe_disciplina = disciplinaRepository.findById(id);
@@ -45,10 +56,11 @@ public class DisciplinaController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
+    @Operation(summary = "Cria uma nova disciplina")
     @PostMapping()
     @Transactional
-    public DisciplinaDTO postDisciplina(@RequestBody Map<String, String> post) {
-        var nome = post.getOrDefault("nome", null);
+    public DisciplinaDTO postDisciplina(@RequestBody DisciplinaResource disciplinaResource) {
+        var nome = disciplinaResource.nome;
         if (nome != null) {
             var disciplina = new Disciplina(nome);
             return new DisciplinaDTO(disciplinaRepository.save(disciplina));
@@ -57,19 +69,21 @@ public class DisciplinaController {
         }
     }
 
+    @Operation(summary = "Edita uma disciplina")
     @PutMapping("/{id}")
     @Transactional
-    public DisciplinaDTO putDisciplina(@PathVariable Long id, @RequestBody Map<String, String> put) {
-        var newNome = put.getOrDefault("nome", null);
+    public DisciplinaDTO putDisciplina(@PathVariable Long id, @RequestBody DisciplinaResource disciplinaResource) {
+        var nm = disciplinaResource.nome;
         var maybe_disciplina = disciplinaRepository.findById(id);
-        if (newNome != null && maybe_disciplina.isPresent()) {
+        if (nm != null && maybe_disciplina.isPresent()) {
             var disciplina = maybe_disciplina.get();
-            disciplina.setNome(newNome);
+            disciplina.setNome(nm);
             return new DisciplinaDTO(disciplinaRepository.save(disciplina));
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
+    @Operation(summary = "Exclui uma disciplina")
     @DeleteMapping("/{id}")
     @Transactional
     public Long deleteDisciplina(@PathVariable Long id) {

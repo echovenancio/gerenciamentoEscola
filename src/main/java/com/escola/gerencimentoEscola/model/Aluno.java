@@ -1,5 +1,6 @@
 package com.escola.gerencimentoEscola.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,18 +26,19 @@ public class Aluno {
     private String email;
     private int idade;
 
-    @OneToMany(mappedBy = "aluno", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "aluno", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AlunoDisciplina> disciplinas = new ArrayList<>();
 
-    @Formula("(select COALESCE(avg(d.nota), 0.0) from aluno_disciplina d where d.aluno_id = id)")
+    @Formula("(select COALESCE(avg(d.nota), 0.0) from aluno_disciplina d where d.aluno_id = id and d.status = 0)")
     private double media;
 
     public Aluno() {}
 
-    public Aluno(String matricula, String nome, int idade) {
+    public Aluno(String matricula, String nome, String email, int idade) {
         this.matricula = matricula;
         this.nome = nome;
         this.idade = idade;
+        this.email = email;
     }
 
     @ManyToOne(optional = true)

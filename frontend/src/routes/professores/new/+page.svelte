@@ -2,8 +2,8 @@
     import * as Form from "$lib/components/ui/form";
     import { Input } from "$lib/components/ui/input";
     import { Toaster } from "$lib/components/ui/sonner";
-    import { alunoSchema, type AlunoSchema } from "./schema";
     import { toast } from "svelte-sonner";
+    import { professorSchema, type ProfessorSchema } from "./schema";
     import type { PageData } from './$types';
     import {
         type SuperValidated,
@@ -12,17 +12,17 @@
     } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
 
-    export let data: SuperValidated<Infer<AlunoSchema>>;
+    export let data: SuperValidated<Infer<ProfessorSchema>>;
 
     const form = superForm(data, {
         dataType: "json",
-        validators: zodClient(alunoSchema),
+        validators: zodClient(professorSchema),
         onResult: (result) => {
             console.log(result);
             if (result.result.type === "success") {
-                toast.success("Aluno Criado!")
+                toast.success("Professor Criado!")
             } else {
-                toast.error("Erro enquanto criava aluno")
+                toast.error("Erro enquanto criava professor")
             }
         }
     });
@@ -32,23 +32,13 @@
  
 <div>
     <Toaster/>
-
-
     <form method="POST" use:enhance >
-        <Form.Field {form} name="matricula">
-            <Form.Control let:attrs>
-                <Form.Label>Matricula</Form.Label>
-                <Input {...attrs} bind:value={$formData.matricula} />
-            </Form.Control>
-            <Form.Description>Número da matricula.</Form.Description>
-            <Form.FieldErrors />
-        </Form.Field>
         <Form.Field {form} name="nome">
             <Form.Control let:attrs>
                 <Form.Label>Nome</Form.Label>
                 <Input {...attrs} bind:value={$formData.nome} />
             </Form.Control>
-            <Form.Description>Nome do aluno.</Form.Description>
+            <Form.Description>Nome do professor.</Form.Description>
             <Form.FieldErrors />
         </Form.Field>
         <Form.Field {form} name="email">
@@ -56,7 +46,7 @@
                 <Form.Label>Email</Form.Label>
                 <Input {...attrs} bind:value={$formData.email} />
             </Form.Control>
-            <Form.Description>Email do aluno.</Form.Description>
+            <Form.Description>Email do professor.</Form.Description>
             <Form.FieldErrors />
         </Form.Field>
         <Form.Field {form} name="idade">
@@ -64,9 +54,9 @@
                 <Form.Label>Idade</Form.Label>
                 <Input {...attrs} type="number" bind:value={$formData.idade} />
             </Form.Control>
-            <Form.Description>Idade do aluno.</Form.Description>
+            <Form.Description>Idade do professor.</Form.Description>
             <Form.FieldErrors />
         </Form.Field>
-        <Form.Button >Cadastrar aluno.</Form.Button>
+        <Form.Button>Cadastrar professor.</Form.Button>
     </form>
 </div>

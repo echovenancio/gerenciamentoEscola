@@ -1,5 +1,7 @@
 package com.escola.gerencimentoEscola.model;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,10 +29,11 @@ public class AlunoDisciplina {
     @JoinColumn(name = "aluno_id")
     private Aluno aluno;
 
-    @Enumerated(EnumType.STRING)
-    private AlunoDisciplinaStatus status = AlunoDisciplinaStatus.EM_CURSO;
+    @Enumerated(EnumType.ORDINAL)
+    private AlunoDisciplinaStatus status;
 
-    @ManyToOne
+    @ManyToOne(optional = true)
+    @JoinColumn(name="professor_id", nullable = true)
     private Professor professor;
 
     public AlunoDisciplina() {}
@@ -40,6 +43,7 @@ public class AlunoDisciplina {
         this.aluno = aluno;
         this.professor = professor;
         this.nota = nota;
+        this.status = AlunoDisciplinaStatus.EM_CURSO;
     }
 
     public Long getId() {
@@ -86,4 +90,15 @@ public class AlunoDisciplina {
         this.professor = professor;
     }
 
+    public void setPrNull() {
+        this.professor = null;
+    }
+
+    public void finalizar() {
+        if (this.nota < 6.0) {
+            this.status = AlunoDisciplinaStatus.REPROVADO;
+            return;
+        }
+        this.status = AlunoDisciplinaStatus.CONCLUIDA;
+    }
 }

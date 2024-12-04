@@ -37,6 +37,8 @@ public class AlunoDisciplinaDTO {
                 return "concluido";
             case EM_CURSO:
                 return "em curso";
+            case REPROVADO:
+                return "reprovado";
             default:
                 return "";
         }

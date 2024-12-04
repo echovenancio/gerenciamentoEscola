@@ -11,6 +11,7 @@
         { name: "Aluno", href: "/alunos" },
         { name: "Turmas", href: "/turmas" },
         { name: "Disciplinas", href: "/disciplinas" },
+        { name: "Professores", href: "/professores" },
     ];
 </script>
 

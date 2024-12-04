@@ -23,6 +23,7 @@ import com.escola.gerencimentoEscola.model.Turma;
 import com.escola.gerencimentoEscola.model.TurmaDTO;
 import com.escola.gerencimentoEscola.model.TurmaRepository;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
 
 class PutTurma {
@@ -37,6 +38,16 @@ class PutTurma {
     }
 }
 
+class TurmaResource {
+    public String identificador;
+
+    public TurmaResource() {}
+
+    public TurmaResource(String identificador) {
+        this.identificador = identificador;
+    }
+}
+
 @RestController
 @RequestMapping("/api/turmas")
 class TurmaController {
@@ -46,11 +57,13 @@ class TurmaController {
     @Autowired
     AlunoRepository alunoRepository;
 
+    @Operation(summary = "Retorna todas as turmas com base na especificação do filtro")
     @GetMapping()
     public List<TurmaDTO> getTurmas(@RequestParam(required = false) String identificador, @RequestParam(required = false) String orderBy) {
         return turmaRepository.filterTurma(identificador, orderBy).stream().map(t -> new TurmaDTO(t)).toList();
     }
 
+    @Operation(summary = "Retorna uma turma com base no id")
     @GetMapping("/{id}")
     public TurmaDTO getTurma(@PathVariable Long id) {
         var maybe_turma = turmaRepository.findById(id);
@@ -60,10 +73,11 @@ class TurmaController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
+    @Operation(summary = "Cria uma nova turma")
     @PostMapping()
     @Transactional
-    public TurmaDTO postTurma(@RequestBody Map<String, String> post) {
-        var identificador = post.getOrDefault("identificador", null);
+    public TurmaDTO postTurma(@RequestBody TurmaResource tResource) {
+        var identificador = tResource.identificador;
         if (identificador != null) {
             return new TurmaDTO(turmaRepository.save(new Turma(identificador)));
         } else {
@@ -71,6 +85,7 @@ class TurmaController {
         }
     }
 
+    @Operation(summary = "Edita uma turma", description = "Suporte a ações de grupo, podendo remover ou adionar varios alunos simultaneamente")
     @PutMapping("/{id}")
     @Transactional
     public TurmaDTO putTurma(@PathVariable Long id, @RequestBody PutTurma pTurma) {
@@ -92,6 +107,7 @@ class TurmaController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
 
+    @Operation(summary = "Exclui uma turma")
     @DeleteMapping("/{id}")
     @Transactional
     public Long deleteTurma(@PathVariable Long id) {

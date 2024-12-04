@@ -3,7 +3,9 @@ package com.escola.gerencimentoEscola.model;
 import java.util.List;
 
 import jakarta.persistence.Id;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.OneToMany;
@@ -19,7 +21,7 @@ public class Professor {
     private int idade;
     private String email;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<AlunoDisciplina> disciplinas;
 
     public Professor() {}
@@ -31,7 +33,7 @@ public class Professor {
     } 
 
     public Long getId() {
-        return Id;
+        return this.id;
     }
 
     public String getNome() {
@@ -60,6 +62,10 @@ public class Professor {
 
     public List<AlunoDisciplina> getDisciplinas() {
         return this.disciplinas;
+    }
+
+    public void setDisciplinas(List<AlunoDisciplina> l) {
+        this.disciplinas = l;
     }
 
 }

@@ -9,6 +9,7 @@ public class AlunoDTO {
     Long id;
     String matricula;
     String nome;
+    String email;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     List<AlunoDisciplinaDTO> disciplinas = new ArrayList<AlunoDisciplinaDTO>();
@@ -28,6 +29,7 @@ public class AlunoDTO {
         this.disciplinas = null;
         this.turma = null;
         this.media = aluno.getMedia();
+        this.email = aluno.getEmail();
     }
 
     public AlunoDTO(Aluno aluno, boolean withDisciplinas, boolean withTurma) {
@@ -36,6 +38,7 @@ public class AlunoDTO {
         this.nome = aluno.getNome();
         this.idade = aluno.getIdade();
         this.media = aluno.getMedia();
+        this.email = aluno.getEmail();
         if (withDisciplinas && aluno.getDisciplinas() != null) { 
             this.disciplinas = aluno.getDisciplinas().stream()
                 .map(d -> new AlunoDisciplinaDTO(d)).toList(); 
@@ -75,6 +78,10 @@ public class AlunoDTO {
 
     public TurmaDTO getTurma() {
         return turma;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
 }

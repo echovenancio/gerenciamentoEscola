@@ -19,12 +19,14 @@ public class ProfessorDTO {
         this.nome = professor.getNome();
         this.idade = professor.getIdade();
         this.disciplinas = null;
+        this.email = professor.getEmail();
     }
 
     public ProfessorDTO(Professor professor, boolean withDisciplinas) {
         this.id = professor.getId();
         this.nome = professor.getNome();
         this.idade = professor.getIdade();
+        this.email = professor.getEmail();
         if (withDisciplinas && professor.getDisciplinas() != null) { 
             this.disciplinas = professor.getDisciplinas().stream()
                 .map(d -> new AlunoDisciplinaDTO(d)).toList(); 
@@ -43,6 +45,10 @@ public class ProfessorDTO {
 
     public int getIdade() {
         return idade;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public List<AlunoDisciplinaDTO> getDisciplinas() {

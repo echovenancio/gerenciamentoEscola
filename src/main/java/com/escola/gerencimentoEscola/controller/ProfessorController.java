@@ -73,11 +73,13 @@ public class ProfessorController {
     @Autowired
     DisciplinaRepository disciplinaRepository;
 
+    @Operation(summary = "Retorna todos os professores com base na especificação do filtro")
     @GetMapping()
     public List<ProfessorDTO> getProfessores(@RequestParam(required = false) String nome, @RequestParam(required = false) String email, @RequestParam(required = false) Integer idade, @RequestParam(required = false) String orderBy) {
         return professorRepository.filterProfessores(nome, email, idade, orderBy).stream().map(a -> new ProfessorDTO(a)).toList();
     }
 
+    @Operation(summary = "Retorna um professores com base no id")
     @GetMapping("/{id}")
     public ProfessorDTO getProfessor(@PathVariable Long id) {
         var maybe_professor = professorRepository.findById(id);
@@ -90,12 +92,14 @@ public class ProfessorController {
         }
     }
 
+    @Operation(summary = "Registra um novo professor")
     @PostMapping()
     @Transactional
     public Professor postProfessor(@RequestBody NovoProfessor professor) {
         return professorRepository.save(new Professor(professor.nome, professor.email, professor.idade));
     }
 
+    @Operation(summary = "Edita um professor")
     @PutMapping("/{id}")
     @Transactional
     public ProfessorDTO putProfessor(@PathVariable Long id, @RequestBody PutProfessor putProfessor) {
@@ -111,12 +115,18 @@ public class ProfessorController {
         return new ProfessorDTO(professor);
     }
 
+    @Operation(summary = "Exclui um professor")
     @DeleteMapping("/{id}")
     @Transactional
     public Long deleteProfessor(@PathVariable Long id) {
-        var professor = professorRepository.findById(id);
-        if (professor.isPresent()) {
-            professorRepository.deleteById(id);
+        var maybe_professor = professorRepository.findById(id);
+        if (maybe_professor.isPresent()) {
+            var professor = maybe_professor.get(); 
+            for (AlunoDisciplina d : professor.getDisciplinas()) {
+                d.setPrNull();
+            }
+            alunoDisciplinaRepositoryu.saveAll(professor.getDisciplinas());
+            professorRepository.delete(professor);
             return id;
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

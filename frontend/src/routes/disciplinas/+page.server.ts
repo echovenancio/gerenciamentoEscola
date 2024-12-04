@@ -1,36 +1,36 @@
 import type { PageServerLoad, Actions } from "./$types.js";
 import { fail } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { alunoSchema } from "./schema.js";
+import { disciplinaSchema } from "./schema.js";
 import { zod } from "sveltekit-superforms/adapters";
  
 export const load: PageServerLoad = async () => {
     return {
-        form: await superValidate(zod(alunoSchema)),
+        form: await superValidate(zod(disciplinaSchema)),
     };
 };
 
 export const actions: Actions = {
     default: async (event) => {
-        let form = await superValidate(event, zod(alunoSchema));
+        let form = await superValidate(event, zod(disciplinaSchema));
         if (!form.valid) {
             return fail(400, { form, });
         }
-        const url = "http://localhost:8080/api/alunos";
-        const jsonData = JSON.stringify(form.data);
+        let id = form.data.disciplinaId;
+        const url = "http://localhost:8080/api/disciplinas/"+id;
+        const jsonData = JSON.stringify({ nome: form.data.nome});
         fetch(url, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: jsonData
         })
-            .then(async (res) => {
+            .then((res) => {
                 console.log(res); 
             })
             .catch((error) => {
                 console.log(error);
             });
-        return { form };
     }
 }
